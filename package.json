@@ -1,0 +1,23 @@
+{
+  "name": "atl_benutzerverwaltung_web_v",
+  "version": "1.0.0",
+  "description": "ATL WEB V HE 19 Kaan Kaplan",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaplank1337/ATL_HE19_WEB_V_Kaan_Kaplan_Backend.git"
+  },
+  "author": "Kaan Kaplan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kaplank1337/ATL_HE19_WEB_V_Kaan_Kaplan_Backend/issues"
+  },
+  "homepage": "https://github.com/kaplank1337/ATL_HE19_WEB_V_Kaan_Kaplan_Backend#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.3"
+  }
+}
