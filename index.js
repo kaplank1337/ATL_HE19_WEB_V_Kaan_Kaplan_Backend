@@ -13,9 +13,16 @@ app.use(express.json());
 let user = [];
 
 
-user.push({    
+user.push({   
+        id: 1, 
         username: "Kaan",
         password: "Kaan"
+})
+
+user.push({    
+    id: 2,
+    username: "Test",
+    password: "Test"
 })
 
 //funktioniert
@@ -31,6 +38,10 @@ app.post('/login', function (req,res){
     return res.sendStatus(404);
 
     
+})
+
+app.get('/getAllUsers', function (req,res){
+ res.send(user).sendStatus(200);
 })
 
 
