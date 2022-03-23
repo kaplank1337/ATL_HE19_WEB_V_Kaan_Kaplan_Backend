@@ -41,9 +41,50 @@ app.post('/login', function (req,res){
 })
 
 app.get('/getAllUsers', function (req,res){
- res.send(user).sendStatus(200);
+// res.send(user).sendStatus(200);
+ res.status(200).send(user);
 })
 
+
+app.post('/createUser', function (req,res){
+    let userID = req.body.userID;
+    let userName = req.body.userName;
+    let userPassword = req.body.password;
+
+    for(const element of user){
+        if(userID == element.id || userName == element.username){
+            validationIfUserExist = 1;
+            return res.sendStatus(409)    
+        }
+    }
+
+    user.push({
+        id: userID,
+        username: userName,
+        password: userPassword
+    })
+    
+    res.sendStatus(200);
+    
+})
+
+app.delete('/deleteUser', function (req,res){
+    /*let userID = req.params.id;
+    let userName = req.params.username;
+    let userPassword = req.params.password;
+    
+
+     for(let i = 0;user.length;i++){
+        if(user[i].id == userID){
+            res.send("Benutzer: " + personen[i].name +" wurde gelöscht!");
+            personen.splice(i,1);
+            return res.sendStatus(200);           
+        }
+    }
+    */
+
+    console.log(req);
+})
 
 
 //funktioniert
