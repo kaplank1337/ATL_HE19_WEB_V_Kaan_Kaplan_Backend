@@ -68,21 +68,43 @@ app.post('/createUser', function (req,res){
     
 })
 
-app.delete('/deleteUser', function (req,res){
-    /*let userID = req.params.id;
-    let userName = req.params.username;
-    let userPassword = req.params.password;
+app.delete('/deleteUser/:id', function (req,res){
+    let userID = req.params.id;
+    
     
 
      for(let i = 0;user.length;i++){
         if(user[i].id == userID){
-            res.send("Benutzer: " + personen[i].name +" wurde gelöscht!");
-            personen.splice(i,1);
+            res.send("Benutzer: " + user[i].name +" wurde gelöscht!");
+            user.splice(i,1);
             return res.sendStatus(200);           
         }
     }
-    */
+    
 
+    console.log(req);
+})
+
+app.put('/updateUserPut/:id', function (req,res){
+    console.log("BACKEND, PUT");
+    console.log(req);
+})
+
+app.patch('/updateUserPatch/:id', function(req,res){
+    let userID = req.params.id;
+    
+    if(req.body.username){
+        let userName = req.body.username;
+    }
+
+    if(req.body.password){
+        let userPassword = req.body.password
+    }
+    
+    console.log("userID = " + userID);
+    console.log("userName = " + userName);
+    console.log("userPassword = " + userPassword);
+    
     console.log(req);
 })
 
