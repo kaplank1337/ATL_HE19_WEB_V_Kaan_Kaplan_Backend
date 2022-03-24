@@ -86,25 +86,37 @@ app.delete('/deleteUser/:id', function (req,res){
 })
 
 app.put('/updateUserPut/:id', function (req,res){
-    console.log("BACKEND, PUT");
-    console.log(req);
+    let userID = req.params.id;
+    let userName = req.body.username;
+    let userPassword = req.body.password;
+
+    for(let i = 0; i < user.length;i++){
+        if(userID == user[i].id){
+            user[i].username = userName;
+            user[i].password = userPassword;
+            console.log(user[i]);
+        }
+    }
+
+    return res.sendStatus(200);
+
+
 })
 
 app.patch('/updateUserPatch/:id', function(req,res){
     let userID = req.params.id;
     
-    if(req.body.username){
+    if("username" in req.body){
         let userName = req.body.username;
     }
 
-    if(req.body.password){
+    if("password" in req.body){
         let userPassword = req.body.password
     }
     
     console.log("userID = " + userID);
-    console.log("userName = " + userName);
+    //console.log("userName = " + userName);
     console.log("userPassword = " + userPassword);
-    
     console.log(req);
 })
 
