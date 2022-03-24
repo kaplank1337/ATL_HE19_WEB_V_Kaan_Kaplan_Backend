@@ -94,7 +94,7 @@ app.put('/updateUserPut/:id', function (req,res){
         if(userID == user[i].id){
             user[i].username = userName;
             user[i].password = userPassword;
-            console.log(user[i]);
+
         }
     }
 
@@ -106,18 +106,19 @@ app.put('/updateUserPut/:id', function (req,res){
 app.patch('/updateUserPatch/:id', function(req,res){
     let userID = req.params.id;
     
-    if("username" in req.body){
+   /* if("username" in req.body){
         let userName = req.body.username;
     }
 
+    if(req.body.)
+
     if("password" in req.body){
         let userPassword = req.body.password
-    }
+    }*/
+
+    console.log(req.body.hasOwnProperty('password'));
+  
     
-    console.log("userID = " + userID);
-    //console.log("userName = " + userName);
-    console.log("userPassword = " + userPassword);
-    console.log(req);
 })
 
 
