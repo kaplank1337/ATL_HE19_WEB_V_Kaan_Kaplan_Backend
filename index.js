@@ -2,8 +2,9 @@ const express = require('express');
 const req = require('express/lib/request');
 const res = require('express/lib/response');
 const cors = require('cors');
-const app = express()
+const app = express();
 const port = 3000;
+const jwt = require('jsonwebtoken');
 
 app.use(cors());
 app.use(express.json());
@@ -37,17 +38,43 @@ user.push({
 app.post('/login', function (req,res){
     let username = req.body.username;
     let password = req.body.password;
+    let counter = 0;
 
     for(const element of user){
         if(username == element.username && password == element.password){
-            return res.sendStatus(200);
+            counter += 1;
+            jwt.sign({
+                id: element.id,
+                username : element.username,
+                password : element.password
+            }, 'secretkey', (err, token) => {
+                res.status(200).json({token : token});
+            });        
+            
         }
     }
-    return res.sendStatus(400);    
+  
+    if(counter == 0 ){        
+        res.sendStatus(403);
+    }
+    
+   
+   
 })
 
-app.get('/getAllUsers', function (req,res){
- res.status(200).send(user);
+app.get('/getAllUsers', verifyToken, function (req,res){
+    console.log(req.token);
+    jwt.verify(req.token, 'secretkey', (err,data) => {
+        if(err){
+            console.log("if");
+            res.sendStatus(403);
+        } else {
+            console.log("else");
+            res.status(200).send(user);
+        }
+
+    });
+ 
 })
 
 
@@ -126,6 +153,22 @@ app.patch('/updateUserPatch/:id', function(req,res){
     }    
 })
 
+function verifyToken(req, res, next){
+    const bearerHeader = req.headers['authorization'];
 
+    if(typeof bearerHeader !== 'undefined'){
+      const bearer = bearerHeader.split(' ');
+      const bearerToken = bearer[1];
+
+      req.token = bearerToken;
+      
+      next();
+
+    } else {
+        // Forbidden
+        res.sendStatus(403);
+    }
+
+}
 
 app.listen(port)
