@@ -12,6 +12,14 @@ app.use(express.json());
 
 let user = [];
 
+//Error 500
+function errorHandler(err, req, res, next) {
+    if (res.headersSent) {
+      return next(err);
+    }
+    res.status(500);
+    res.render('error', { error: err });
+  }
 
 user.push({   
         id: 1, 
@@ -25,7 +33,7 @@ user.push({
     password: "Test"
 })
 
-//funktioniert
+
 app.post('/login', function (req,res){
     let username = req.body.username;
     let password = req.body.password;
@@ -35,13 +43,10 @@ app.post('/login', function (req,res){
             return res.sendStatus(200);
         }
     }
-    return res.sendStatus(404);
-
-    
+    return res.sendStatus(400);    
 })
 
 app.get('/getAllUsers', function (req,res){
-// res.send(user).sendStatus(200);
  res.status(200).send(user);
 })
 
@@ -51,10 +56,10 @@ app.post('/createUser', function (req,res){
     let userName = req.body.userName;
     let userPassword = req.body.password;
 
-    for(const element of user){
+    for(let element of user){
         if(userID == element.id || userName == element.username){
             validationIfUserExist = 1;
-            return res.sendStatus(409)    
+            return res.sendStatus(403)    
         }
     }
 
@@ -69,9 +74,7 @@ app.post('/createUser', function (req,res){
 })
 
 app.delete('/deleteUser/:id', function (req,res){
-    let userID = req.params.id;
-    
-    
+    let userID = req.params.id; 
 
      for(let i = 0;user.length;i++){
         if(user[i].id == userID){
@@ -80,9 +83,6 @@ app.delete('/deleteUser/:id', function (req,res){
             return res.sendStatus(200);           
         }
     }
-    
-
-    console.log(req);
 })
 
 app.put('/updateUserPut/:id', function (req,res){
@@ -97,118 +97,35 @@ app.put('/updateUserPut/:id', function (req,res){
 
         }
     }
-
     return res.sendStatus(200);
-
-
 })
 
 app.patch('/updateUserPatch/:id', function(req,res){
     let userID = req.params.id;
     
-   /* if("username" in req.body){
+    if(req.body.hasOwnProperty('username')){
         let userName = req.body.username;
+
+        for(let i = 0;user.length;i++){
+            if(user[i].id == userID){
+                user[i].username = userName;
+                return res.sendStatus(200);
+            }
+        }
     }
 
-    if(req.body.)
-
-    if("password" in req.body){
+    if(req.body.hasOwnProperty('password')){
         let userPassword = req.body.password
-    }*/
 
-    console.log(req.body.hasOwnProperty('password'));
-  
-    
-})
-
-
-//funktioniert
-/*
-app.get('/', function (req, res) {
-  res.send(personen)
-})
-*/
-
-/*
-//funktioniert
-app.get('/:id', function (req,res){
-    
-    let personenid = req.params.id;
-
-    for(let i = 0;personen.length;i++){
-        if(personen[i].id == personenid){
-            res.send(personen[i]);
+        for(let i = 0;user.length;i++){
+            if(user[i].id == userID){
+                user[i].password = userPassword;
+                return res.sendStatus(200);
+            }
         }
-    }
-    
-    
+    }    
 })
-*/
 
-//Funktioniert
-/*app.delete('/:id', function (req,res){
-    let personenid = req.params.id;
-
-    for(let i = 0;personen.length;i++){
-        if(personen[i].id == personenid){
-            res.send("Benutzer: " + personen[i].name +" wurde gelöscht!");
-            personen.splice(i,1);            
-        }
-    }
-})
-*/
-
-
-
-
-
-/*
-//funktioniert
-app.put('/:id', function (req,res){
-    
-    let personenid = req.body.id;
-    let personenname = req.body.name;
-    let counter = 0;
-    
-
-    for(let i = 0;personen.length;i++){
-        if(personen[i].id == personenid){
-           personen[i].name = personenname;
-           res.status(200).send("Update wurde durchgeführt!")
-        } else{
-            counter++;           
-        } 
-        if(counter == personen.length){
-            personen.push({
-                id: personenid,
-                name: personenname
-            })
-            res.status(200).send("Benutzer wurde erstellt!");
-        }        
-    }
-})
-*/
-
-
-
-/*
-//funktioniert
-app.patch('/:id', function(req,res){
-    let entwurf = req.url;
-
-    let personenid = entwurf.substring(1);
-    let personenname = req.body.name;
-    //console.log(personenid);
-
-    for(let i = 0;personen.length;i++){
-        if(personen[i].id == personenid){
-            personen[i].name = personenname;
-            res.send("Benutzer wurde durch PATCH updated!")
-        }
-    }
-
-})
-*/
 
 
 app.listen(port)
