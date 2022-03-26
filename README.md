@@ -12,6 +12,14 @@ SecondPage.html ist die zweite Website bei der es möglich ist Benutzer zu erste
 3. Im Terminal einmal nodemon ausführen um den Code zu starten </br>
 4. Zuschauen und staunen</p>
 
+ <h2>NPM Pakete</h2>
+ <p>Es wurden folgende NPM Pakete verwendet: <br>
+1 - Express <br>
+2 - Nodemon <br>
+3 - Cors <br>
+4 - jsonwebtoken</p>
+ 
+
 <h2>Sämtlich Beispiele werden in der Readme Datei im Frontend aufgezeigt</h2>
 
 <h2>Es gibt keine Lizenz Informationen</h2>
