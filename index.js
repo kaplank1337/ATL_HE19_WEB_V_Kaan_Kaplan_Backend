@@ -30,6 +30,49 @@ function errorHandler(err, req, res, next) {
     res.render('error', { error: err });
   }
 
+  /**
+ * userIDValidation
+ * Dieser überprüft die Eingabe der User ID via Regex. Der String darf nur aus Zahlen von 0-9 bestehen.
+ * @param {String} userID Es wird die User ID mitgegeben die im Frontend im Feld ID eingegeben und mit Erstellen oder Update bestätigt wird.
+ * @returns Es handelt sich eigentlich um einen Boolean der falls der Regex matcht ein True zurück gibt und ansonsten ein False
+ */
+function userIDValidation(userID){
+    let reg = new RegExp('^[0-9]$');
+    if(reg.test(userID)){
+        return true;
+    }
+    return false;
+}
+
+/**
+ * userNameValidaton
+ * Dieser überprüft die Eingabe des Benutzernamens via Regex. Bei der Überprüfung muss der Anfangsbuchstabe gross sein und der klein. Es dürfen nur Buchstaben aus dem Alphabet verwendet werden.
+ * @param {String} userName Als Parameter wird der eingegebene Benutzername, die im Frontend im Feld Benutzer eingegeben wird mitgegeben.
+ * @returns Hierbei handelt es sich um eine boolsche Funktion die True bei Regex Match und ansonsten ein False zurückgibt.
+ */
+function userNameValidation(userName){
+    let reg = new RegExp('^[A-Z][a-z\-]+$');
+    if(reg.test(userName)){
+        return true;
+    }
+    return false;
+}
+
+/**
+ * userPasswordValidation
+ * Dieser überprüft die Eingabe des Benutzerpassworts via Regex. Das Passwort muss min. 8 Zeichen lang sein, Gross- und Kleinbuchstaben sowie ein Sonderzeichen haben.
+ * @param {String} userPassword Als Parameter wird der eingegebene Benutzerpasswort, die im Frontendim Feld Passwort eingegeben wird mitgegeben.
+ * @returns Hierbei handelt es sich um eine boolsche Funktion die True bei Regex Match und asonsten ein False zurückgibt.
+ */
+function userPasswordValidation(userPassword){
+    let reg = new RegExp("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$");
+    if(reg.test(userPassword)){
+        return true;
+    }
+    return false;
+}
+
+
 user.push({   
         id: 1, 
         username: "Kaan",
@@ -46,11 +89,11 @@ user.push({
 app.post('/login', function (req,res){
     let username = req.body.username;
     let password = req.body.password;
-    let counter = 0;
+    let areCredentialsCorrect = 0;
 
     for(const element of user){
         if(username == element.username && password == element.password){
-            counter += 1;
+            areCredentialsCorrect += 1;
             //Beim Login wird der Token zurückgegeben.
             jwt.sign({
                 id: element.id,
@@ -63,7 +106,7 @@ app.post('/login', function (req,res){
         }
     }
   
-    if(counter == 0 ){        
+    if(areCredentialsCorrect == 0 ){        
         res.sendStatus(403);
     }
     
@@ -72,7 +115,7 @@ app.post('/login', function (req,res){
 })
 
 app.get('/getAllUsers', verifyToken, function (req,res){
-    console.log(req.token);
+   
     jwt.verify(req.token, 'secretkey', (err,data) => {
         if(err){
             res.sendStatus(403);
@@ -85,10 +128,22 @@ app.get('/getAllUsers', verifyToken, function (req,res){
 })
 
 
-app.post('/createUser', function (req,res){
+app.post('/createUser', verifyToken, function (req,res){
     let userID = req.body.userID;
     let userName = req.body.userName;
     let userPassword = req.body.password;
+
+    if(!userIDValidation(userID)){
+        return res.sendStatus(403);
+    }
+
+    if(!userNameValidation(userName)){
+        return res.sendStatus(403);
+    }
+
+    if(!userPasswordValidation(userPassword)){
+        return res.sendStatus(403);
+    }
 
     for(let element of user){
         if(userID == element.id || userName == element.username){
@@ -107,22 +162,44 @@ app.post('/createUser', function (req,res){
     
 })
 
-app.delete('/deleteUser/:id', function (req,res){
+app.delete('/deleteUser/:id', verifyToken, function (req,res){
     let userID = req.params.id; 
+
+    if(!userIDValidation(userID)){
+        return res.sendStatus(403);
+    }
 
      for(let i = 0;user.length;i++){
         if(user[i].id == userID){
-            res.send("Benutzer: " + user[i].name +" wurde gelöscht!");
+            userTemporyName = user[i].userName;
             user.splice(i,1);
-            return res.sendStatus(200);           
+            res.sendStatus(200).json({username : userTemporyName});           
         }
     }
+    
 })
 
-app.put('/updateUserPut/:id', function (req,res){
+app.put('/updateUserPut/:id', verifyToken, function (req,res){
     let userID = req.params.id;
     let userName = req.body.username;
     let userPassword = req.body.password;
+
+    if(!userIDValidation(userID)){
+  
+        return res.sendStatus(403);
+        
+    }
+
+    if(!userNameValidation(userName)){
+        
+      
+        return res.sendStatus(403);
+    }
+
+    if(!userPasswordValidation(userPassword)){
+        
+        return res.sendStatus(403);
+    }
 
     for(let i = 0; i < user.length;i++){
         if(userID == user[i].id){
@@ -134,11 +211,20 @@ app.put('/updateUserPut/:id', function (req,res){
     return res.sendStatus(200);
 })
 
-app.patch('/updateUserPatch/:id', function(req,res){
+app.patch('/updateUserPatch/:id', verifyToken, function(req,res){
     let userID = req.params.id;
+
+     if(!userIDValidation(userID)){
+        return res.sendStatus(403);
+    }
     
     if(req.body.hasOwnProperty('username')){
         let userName = req.body.username;
+
+         if(!userNameValidation(userName)){
+           
+        return res.sendStatus(403);
+    }
 
         for(let i = 0;user.length;i++){
             if(user[i].id == userID){
@@ -150,6 +236,10 @@ app.patch('/updateUserPatch/:id', function(req,res){
 
     if(req.body.hasOwnProperty('password')){
         let userPassword = req.body.password
+
+          if(!userPasswordValidation(userPassword)){
+           return res.sendStatus(403);
+    }
 
         for(let i = 0;user.length;i++){
             if(user[i].id == userID){
